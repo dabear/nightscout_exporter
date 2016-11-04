@@ -52,7 +52,6 @@ func getJson(url string) NightscoutPebble {
 	defer r.Body.Close()
 
 	bar := NightscoutPebble{}
-
 	err2 := json.NewDecoder(r.Body).Decode(&bar)
 	if err2 != nil {
 		fmt.Println("error:", err2.Error())
@@ -87,7 +86,10 @@ func (e *Exporter) scrape(ch chan<- prometheus.Metric) error {
 	e.statusNightscout.Reset()
 
 	data := getJson(*nightscoutUrl)
+
+	fmt.Println("trying to convert to float:", data.Bgs[0].Sgv)
 	glucose, _ := strconv.ParseFloat(data.Bgs[0].Sgv, 64)
+
 	e.statusNightscout.With(prometheus.Labels{"glucosetype": "mmol", "url": *nightscoutUrl}).Set(float64(glucose))
 
 	return nil
@@ -99,7 +101,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	e.mutex.Lock() // To protect metrics from concurrent collects.
 	defer e.mutex.Unlock()
 	if err := e.scrape(ch); err != nil {
-		log.Printf("Error scraping ssl certificates: %s", err)
+		log.Printf("Error scraping nightscout url: %s", err)
 	}
 
 	e.statusNightscout.Collect(ch)
