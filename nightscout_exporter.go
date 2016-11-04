@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	namespace = "porter" // For Prometheus metrics.
+	namespace = "nightscout" // For Prometheus metrics.
 )
 
 var (
@@ -22,7 +22,7 @@ var (
 	nightscoutUrl = flag.String("nightscout_endpoint", "https://foo.azurewebsites.net/pebble?count=2&units=mmol", "Nightscout url to jsondata, only mmol is supported")
 )
 
-// Exporter collects porterssl stats from machine of a specified user and exports them using
+// Exporter collects nightscout stats from machine of a specified user and exports them using
 // the prometheus metrics package.
 type Exporter struct {
 	mutex            sync.RWMutex
@@ -62,7 +62,7 @@ func getJson(url string) NightscoutPebble {
 
 }
 
-// NewportersslExporter returns an initialized Exporter.
+// NewNightscoutCheckerExporter returns an initialized Exporter.
 func NewNightscoutCheckerExporter() *Exporter {
 
 	return &Exporter{
@@ -77,7 +77,7 @@ func NewNightscoutCheckerExporter() *Exporter {
 
 }
 
-// Describe describes all the metrics ever exported by the porterssl exporter. It
+// Describe describes all the metrics ever exported by the nightscout exporter. It
 // implements prometheus.Collector.
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	e.statusNightscout.Describe(ch)
